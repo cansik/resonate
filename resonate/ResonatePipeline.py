@@ -33,6 +33,7 @@ class ResonatePipeline:
         def on_vad_progress(value: float):
             on_progress(value, "voice activation detection")
 
+        self.vad.reset_states()
         vad_results = self.vad.process(input_audio_cpu, on_progress=on_vad_progress)
         vad_segments = convert_vad_results_to_segments(vad_results, len(input_audio_cpu))
 
@@ -48,4 +49,4 @@ class ResonatePipeline:
             result = self.tts.process(chunk)
             transcriptions.append(result["text"])
 
-        return " ".join(transcriptions)
+        return " ".join(transcriptions).strip()
