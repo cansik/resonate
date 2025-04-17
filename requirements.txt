@@ -1,0 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cu126
+
+torch~=2.6
+torchaudio~=2.6
+
+diffusers~= 0.33
+transformers~=4.51
+accelerate~=1.6
+
+pywebview~=5.4
+gradio~=5.25

@@ -1,0 +1,4 @@
+uv~=0.6
+tqdm~=4.67
+pyinstaller~=6.13
+setuptools~=78.1
