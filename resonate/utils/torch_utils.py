@@ -34,12 +34,12 @@ def get_variant() -> Optional[str]:
     return "fp16"
 
 
-def get_dtype() -> torch.dtype:
-    if is_macosx():
+def get_dtype(allow_float_16: bool = False, allow_bfloat_16: bool = False) -> torch.dtype:
+    if is_macosx() and not allow_float_16:
         return torch.float32
 
-    if is_windows() and is_cpu():
-        return torch.float32
+    if torch.cuda.is_available() and allow_bfloat_16:
+        return torch.bfloat16
 
     return torch.float16
 

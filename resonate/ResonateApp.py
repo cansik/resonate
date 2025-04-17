@@ -1,20 +1,24 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import gradio as gr
 import numpy as np
 
+from resonate.ResonatePipeline import ResonatePipeline
+
 
 class ResonateApp:
     def __init__(self):
-        pass
+        self.pipeline: Optional[ResonatePipeline] = None
 
     def transcribe_text(self, audio_input: Tuple[int, np.ndarray], progress=gr.Progress()):
         sample_rate, audio_data_uint16 = audio_input
 
-        # load model if necessary
-        progress(0, desc="loading generator")
-        print(sample_rate)
-        return "hello world"
+        if self.pipeline is None:
+            progress(0, desc="loading pipeline")
+            self.pipeline = ResonatePipeline()
+
+        result = self.pipeline.process(sample_rate, audio_data_uint16, progress)
+        return result
 
     def run(self) -> str:
         transcribe_tab = gr.Interface(fn=self.transcribe_text,
@@ -24,10 +28,11 @@ class ResonateApp:
                                       outputs=[
                                           gr.Text(label="Text")
                                       ],
-                                      allow_flagging="never",
+                                      flagging_mode="never",
                                       clear_btn=gr.Button(visible=False),
                                       submit_btn="Transcribe",
-                                      analytics_enabled=False)
+                                      analytics_enabled=False,
+                                      concurrency_limit=1)
 
         demo = gr.TabbedInterface([
             transcribe_tab
