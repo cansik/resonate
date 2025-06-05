@@ -23,11 +23,12 @@ class ResonatePipeline:
     def process(self, sample_rate: int, audio_data_uint16: np.ndarray,
                 on_progress: Callable[[float, str], None]) -> str:
         audio_data_fp32 = audio_data_uint16.astype(np.float32) / self.UINT16_NORMALIZE_FACTOR
-        mono_audio_data_fp32 = audio_data_fp32[:, 0].flatten()
+        mono_audio_data_fp32 = audio_data_fp32[:, 0].flatten() if len(audio_data_fp32.shape) > 1 else audio_data_fp32
         audio_data = Tensor(mono_audio_data_fp32)
 
         on_progress(0, "resampling")
         input_audio_cpu = F.resample(audio_data, sample_rate, self.DEFAULT_SAMPLE_RATE, lowpass_filter_width=6)
+        total_samples = len(input_audio_cpu)
 
         # vad-analysis
         def on_vad_progress(value: float):
@@ -35,18 +36,18 @@ class ResonatePipeline:
 
         self.vad.reset_states()
         vad_results = self.vad.process(input_audio_cpu, on_progress=on_vad_progress)
-        vad_segments = convert_vad_results_to_segments(vad_results, len(input_audio_cpu))
+        vad_segments = convert_vad_results_to_segments(vad_results, total_samples)
 
         # transcription
         input_audio = input_audio_cpu.numpy()
-        chunks = []
-        for segment in vad_segments:
-            chunks.append(input_audio[segment.start:segment.end])
 
         transcriptions = []
-        for i, chunk in enumerate(chunks):
-            on_progress(i / len(chunks), "transcription")
+        for segment in vad_segments:
+            chunk = input_audio[segment.start:segment.end]
+
+            on_progress(segment.start / total_samples, "transcription")
             result = self.tts.process(chunk)
-            transcriptions.append(result["text"])
+            transcriptions.append(result["text"].strip())
+            transcriptions.append("\n")
 
         return " ".join(transcriptions).strip()
