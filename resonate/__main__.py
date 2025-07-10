@@ -1,3 +1,14 @@
+import locale
+import os
+
+os.environ.setdefault("LANG", "en_US.UTF-8")
+
+try:
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+except locale.Error:
+    # on some macs you might need a different name, e.g. "en_US"
+    pass
+
 import multiprocessing
 import os
 import sys
@@ -21,6 +32,8 @@ def main():
 
     app = ResonateApp()
     local_url = app.run()
+
+    print(local_url)
 
     window = ResonateWindow(local_url)
     window.open()

@@ -1221,7 +1221,7 @@ dependencies = [
 requires-dist = [
     { name = "accelerate", specifier = "~=1.6" },
     { name = "diffusers", specifier = "~=0.33" },
-    { name = "gradio", specifier = "~=5.25" },
+    { name = "gradio", specifier = "~=5.36.2" },
     { name = "pywebview", specifier = "~=5.4" },
     { name = "torch", specifier = "~=2.6" },
     { name = "torchaudio", specifier = "~=2.6" },
