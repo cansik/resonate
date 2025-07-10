@@ -56,7 +56,7 @@ class ResonateApp:
         temp_file = temp_file_dir / "segments.csv"
         temp_file.write_text(csv_text, encoding="utf-8")
 
-        return result.timing.to_dict(), text, temp_file
+        return result.timing.to_dict(), text, str(temp_file)
 
     def run(self) -> str:
         transcribe_tab = gr.Interface(fn=self.transcribe_text,
