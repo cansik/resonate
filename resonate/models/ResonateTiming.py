@@ -2,6 +2,8 @@ from contextlib import contextmanager
 from time import perf_counter
 from typing import Any, Dict, List
 
+from resonate.utils.time_utils import format_timestamp
+
 
 class ResonateTiming:
     """
@@ -49,4 +51,5 @@ class ResonateTiming:
         Each key maps to a list of elapsed times.
         """
         # Return a copy to prevent external modifications
-        return {k: v.copy() for k, v in self.timings.items()}
+        return {k: [format_timestamp(v) for v in v]
+                for k, v in self.timings.items()}
