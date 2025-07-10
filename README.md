@@ -2,9 +2,17 @@
 
 Another voice transcription application.
 
+![App](documentation/app.png)
+
 ## Installation
 
 ```
 pip install -r dev-requirements.txt
-uv pip install -r requirements.txt --index-strategy unsafe-best-match
+uv sync
+```
+
+## Run
+
+```
+uv run python -m resonate
 ```

@@ -9,13 +9,13 @@ class ResonateWindow:
 
     def __init__(self, url: str):
         webview.settings["ALLOW_DOWNLOADS"] = True
-        self.main_window = webview.create_window("Resonate", url, width=1024, height=800)
+        self.main_window = webview.create_window("Resonate", url, width=1024, height=900)
 
         self.main_window.events.loaded += self._on_loaded
 
         # download related
         self.download_folder: Path = Path.home() / "Downloads"
-        self.allowed_download_formats: Set[str] = {".jpg", ".jpeg", ".png"}
+        self.allowed_download_formats: Set[str] = {".jpg", ".jpeg", ".png", ".csv"}
 
     def _on_loaded(self):
         url: str = self.main_window.get_current_url()

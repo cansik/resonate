@@ -8,7 +8,10 @@ from resonate.utils import torch_utils
 
 class TransformersWhisper:
 
-    def __init__(self, model_id: str = "primeline/whisper-large-v3-turbo-german"):
+    def __init__(self,
+                 model_id: str = "distil-whisper/distil-large-v3.5",
+                 language: str | None = None,
+                 batch_size: int = 8):
         self.model_id = model_id
 
         self.torch_device = torch_utils.get_device()
@@ -20,17 +23,24 @@ class TransformersWhisper:
         self.model.to(self.torch_device)
         self.processor = AutoProcessor.from_pretrained(model_id)
 
+        generate_kwargs: dict[str, Any] = {
+            "max_new_tokens": 256
+        }
+
+        if language is not None:
+            generate_kwargs["language"] = language
+
         self.pipe = pipeline(
             "automatic-speech-recognition",
             model=self.model,
             tokenizer=self.processor.tokenizer,
             feature_extractor=self.processor.feature_extractor,
             chunk_length_s=30,
-            batch_size=16,
+            batch_size=batch_size,
             return_timestamps=True,
             torch_dtype=self.torch_dtype,
             device=self.torch_device,
-            generate_kwargs={"max_new_tokens": 128, "language": "de"}
+            generate_kwargs=generate_kwargs
         )
 
     def process(self, audio_data_fp32: np.ndarray) -> Dict[str, Any]:

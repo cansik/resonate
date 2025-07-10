@@ -1,0 +1,19 @@
+[project]
+name = "resonate"
+version = "0.1.0"
+description = "Another voice transcription application."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "accelerate~=1.6",
+    "diffusers~=0.33",
+    "gradio~=5.25",
+    "pywebview~=5.4",
+    "torch~=2.6",
+    "torchaudio~=2.6",
+    "transformers~=4.51",
+]
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu126"
