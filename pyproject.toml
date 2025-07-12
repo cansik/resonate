@@ -8,13 +8,10 @@ dependencies = [
     "accelerate~=1.6",
     "diffusers~=0.33",
     "gradio~=5.36.2",
+    "omegaconf>=2.3.0",
     "pywebview~=5.4",
+    "soundfile>=0.13.1",
     "torch~=2.6",
     "torchaudio~=2.6",
     "transformers~=4.51",
-]
-
-[tool.uv]
-extra-index-url = [
-    "https://download.pytorch.org/whl/cu126"
 ]

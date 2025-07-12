@@ -11,6 +11,7 @@ from resonate.utils.time_utils import format_timestamp
 model_options: dict[str, str] = {
     "whisper-large-v3-turbo-german": "primeline/whisper-large-v3-turbo-german",
     "whisper-tiny-german-1224": "primeline/whisper-tiny-german-1224",
+    "whisper-large-v3-turbo-swiss-german": "Flurin17/whisper-large-v3-turbo-swiss-german",
     "whisper-distil-large-v3.5": "distil-whisper/distil-large-v3.5"
 }
 
@@ -31,6 +32,7 @@ class ResonateApp:
                         model_key: str,
                         language_key: str,
                         batch_size: int,
+                        use_denoise: bool,
                         vad_min_silence: int,
                         progress=gr.Progress()):
         model_id = model_options[model_key]
@@ -38,9 +40,9 @@ class ResonateApp:
 
         sample_rate, audio_data_uint16 = audio_input
 
-        if self.pipeline is None:
-            progress(0, desc="loading pipeline")
-            self.pipeline = ResonatePipeline(model_id, language, batch_size, vad_min_silence)
+        progress(0, desc="loading pipeline")
+
+        self.pipeline = ResonatePipeline(model_id, language, batch_size, use_denoise, vad_min_silence)
 
         # post-process result
         result = self.pipeline.process(sample_rate, audio_data_uint16, progress)
@@ -63,8 +65,10 @@ class ResonateApp:
                                       inputs=[
                                           gr.Audio(label="Audio"),
                                           gr.Dropdown(label="Model", choices=list(model_options.keys())),
-                                          gr.Dropdown(label="Language", choices=list(language_options.keys())),
+                                          gr.Dropdown(label="Language", choices=list(language_options.keys()),
+                                                      value="German"),
                                           gr.Dropdown(label="Batch Size", choices=[1, 2, 4, 8, 16, 32], value=8),
+                                          gr.Checkbox(label="Denoise", value=False),
                                           gr.Number(label="VAD Min Silence (ms)", value=1000)
                                       ],
                                       outputs=[
